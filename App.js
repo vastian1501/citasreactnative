@@ -9,6 +9,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 
 import Principal from './screens/Principal';
 import Formulario from './screens/Formulario';
+import { Clientes } from "./screens/Clientes";
 const Tab = createBottomTabNavigator();
 
 export default function App() {
@@ -44,10 +45,12 @@ export default function App() {
                     name="citas"
                     component={Principal}
                     options={{
+                        tabBarBadge: 3,
                         headerRight: () => (
-            <View style={{marginRight:20,}}>
-                <Text>{fechaNueva}</Text>
-            </View>),
+                            <View style={{ marginRight: 20 }}>
+                                <Text>{fechaNueva}</Text>
+                            </View>
+                        ),
                         headerTitle: "Lulys Nails",
                         tabBarLabel: "Citas",
                         tabBarIcon: ({ color, size }) => (
@@ -60,13 +63,28 @@ export default function App() {
                     }}
                 />
                 <Tab.Screen
-                    name="Nueva Cita"
+                    name="nuevaCita"
+                    title="Nueva Cita"
                     component={Formulario}
                     options={{
-                        tabBarLabel: "Nueva cita",
+                        tabBarLabel: "Nueva Cita",
                         tabBarIcon: ({ color, size }) => (
                             <MaterialCommunityIcons
                                 name="note-plus"
+                                color={color}
+                                size={size}
+                            />
+                        ),
+                    }}
+                />
+                <Tab.Screen
+                    name="nuevoCliente"
+                    component={Clientes}
+                    options={{
+                        tabBarLabel: "Nuevo Cliente",
+                        tabBarIcon: ({ color, size }) => (
+                            <MaterialCommunityIcons
+                                name="account-plus-outline"
                                 color={color}
                                 size={size}
                             />

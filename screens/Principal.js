@@ -3,11 +3,12 @@ import React, { useState, useEffect } from "react";
 import { ViewComponent } from "react-native";
 import { StyleSheet, Text, View, FlatList } from "react-native";
 import { Button, Avatar } from "react-native-elements";
+import App from "../App.js";
 
 import Cita from "../componentes/Citas.js";
 import Formulario from "../componentes/Formulario.js";
 
-export default function Principal() {
+export default function Principal(props) {
     //Definir state de citas
     const [citas, setCitas] = useState([
         {
@@ -16,7 +17,7 @@ export default function Principal() {
             numeroCliente: "123123123",
             manos: "Nada",
             pies: "Gel",
-            fechaCita: "12/07/2021",
+            fechaCita: "12/10/2021",
             hora: "15:00",
             comentarios: "655165118",
         },
@@ -26,7 +27,7 @@ export default function Principal() {
             numeroCliente: "123123123",
             manos: "Nada",
             pies: "Semipermanentes",
-            fechaCita: "03/7/2021",
+            fechaCita: "03/11/2021",
             hora: "15:20",
             comentarios: "Me debe 5 euros",
         },
@@ -36,7 +37,7 @@ export default function Principal() {
             numeroCliente: "123123123",
             manos: "Gel",
             pies: "Gel",
-            fechaCita: "02/7/2021",
+            fechaCita: "12/9/2021",
             hora: "15:30",
             comentarios: "Me debe 5 euros",
         },
@@ -46,12 +47,16 @@ export default function Principal() {
             numeroCliente: "123123123",
             manos: "Seminpermanentes",
             pies: "Nada",
-            fechaCita: "8/30/2021",
+            fechaCita: "12/9/2021",
             hora: "15:40",
             comentarios: "",
         },
     ]);
 
+    //Contador de citas para hoy 
+    const [contador, setContador] = useState(0);
+    console.log('contador1 = ' +contador)
+    
     //Eliminar states de Citas
     const eliminarCitas = (id) => {
         setCitas((citasActuales) => {
@@ -76,27 +81,48 @@ export default function Principal() {
         "Sabado",
     ];
     const fechaNueva =
-        hoy.getDate() + "/" + (hoy.getMonth() + 1) + "/" + hoy.getFullYear();
-
+        hoy.getMonth() + 1 + "/" + hoy.getDate() + "/" + hoy.getFullYear();
+        
     console.log(fechaNueva);
+
+
+    
+    
+    
+    // var incremento = 0;
+    // citas.map((cita) => {
+    //     Date.parse(cita.fechaCita);
+    //     if (Date.parse(cita.fechaCita) === Date.parse(fechaNueva)) {
+    //         incremento++;
+    //     }
+    //     console.log("Fecha cita " + cita.fechaCita);
+    //     console.log("Esto incrementa" + incremento);
+    //     return incremento;
+    // });
     
     var incremento = 0;
-    citas.forEach((cita) => {
-            cita.fechaCita;
-            if (cita.fechaCita === fechaNueva) {
-                incremento++;
-            }
-            console.log(cita.fechaCita);
-            console.log(incremento);
-            return(incremento)
-        });
+    useEffect(() => {
+            citas.map((cita) => {
+                Date.parse(cita.fechaCita);
+                if (Date.parse(cita.fechaCita) === Date.parse(fechaNueva)) {
+                    incremento++;
+                }
+                console.log("Fecha cita " + cita.fechaCita);
+                console.log("Esto incrementa" + incremento);
+                setContador(incremento);
+                return incremento;
+            });
+        })
 
-    console.log(incremento)
+    const contadorFinal = 0;
+    console.log('Cuenta' + contador)
+
     //Mostrar ocultar Formulario
     const [mostrarForm, guardarMostrarForm] = useState(false);
     const mostrarOcultarForm = () => {
         guardarMostrarForm(!mostrarForm);
     };
+    
     return (
         <View style={styles.fondo}>
             <Avatar
@@ -164,9 +190,15 @@ export default function Principal() {
                 <>
                     <Text style={styles.subtituloCP}>
                         {citas.length > 0
-                            ? ["Citas pendientes: ", citas.length,' Citas para hoy: ', incremento]
+                            ? [
+                                  "Citas pendientes: ",
+                                  citas.length,
+                                  " Citas para hoy: ",
+                                  contador,
+                              ]
                             : "No hay citas, añade una nueva"}
                     </Text>
+                    
                     <FlatList
                         style={styles.flatList}
                         data={citas.sort(function (a, b) {
