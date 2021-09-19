@@ -4,7 +4,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { Card, ListItem, Button } from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
 import shortid from "shortid";
-import firebase from '../database/Firebase'
+import firebase from "../database/Firebase";
 
 import {
     Image,
@@ -17,13 +17,7 @@ import {
     Alert,
 } from "react-native";
 
-export default function Formulario({
-    citass,
-    setCitass,
-    guardarMostrarForm,
-}) {
-
-    
+export default function Formulario(props,{ citass, setCitass, guardarMostrarForm }) {
     const [clientes, setClientes] = useState([]);
 
     useEffect(() => {
@@ -50,75 +44,121 @@ export default function Formulario({
     const [mode, setMode] = useState("time");
     const [show, setShow] = useState(false);
 
-    
-    
     //Guardar Cita
-    //Esto esta pendiente, hay que obtener el id del cliente seleccionado y pasarlo al state citas {cliente}
-    // nose como se hace por eso lo dejo aqui, 
+    //Se ha podido guardar la cita en la base de datos, el problema es que no se consigue
+    //guardar la fechaCita (undefined) del state citas.
 
     const [citas, setCitas] = useState({
-            cliente: {
-                id: "",
-                nombre: "",
-                apellidos: "",
-                telefono: "",
-            },
-            manos: "",
-            pies: "",
-            fechaCita: "",
-            hora: "",
-            comentarios: "",
-    })
+        idcliente: "",
+        nombre: "",
+        apellidos: "",
+        telefono: "",
+        manos: "",
+        pies: "",
+        hora: "",
+        comentarios: "",
+    });
 
     const actualizarUseState = (name, value) => {
         setCitas({ ...citas, [name]: value });
     };
 
-    const guardarNombre = (item) => {
-        firebase.db.collection("clientes")
-            .where("id", "==", item)
+    //Funcion setState para gaurdar objecto dentro de un objeto
+    // const actualizarUseStateCliente = (name, value) => {
+    //     setCitas({
+    //         ...citas,
+    //         cliente: {
+    //             ...citas.cliente,
+    //             [name]: value,
+    //         },
+    //     });
+    // };
+
+    const guardarNombre = async (valueId) => {
+        console.log("funciona" + valueId);
+
+        const dbRef = firebase.db.collection("clientes").doc(valueId);
+        await dbRef
             .get()
-            .then((querySnapshot) => {
-                querySnapshot.forEach((doc) => {
-                    // doc.data() is never undefined for query doc snapshots
-                    console.log(doc.id, " => ", doc.data());
-                });
+            .then((doc) => {
+                const { nombre, apellidos, telefono } = doc.data();
+                const clientes = {
+                    idclientes: doc.id,
+                    nombre: nombre,
+                    apellidos: apellidos,
+                    telefono: telefono,
+                };
+
+                // console.log(nombre, apellidos, telefono);
+                // setCitas+
+                setCitas(clientes);
             })
             .catch((error) => {
                 console.log("Error getting documents: ", error);
             });
-    }
+        console.log(citas);
+    };
 
-    const guardarCita = () => {
+    const guardarNuevaCita = async () => {
+        // setLoading(true);
         if (
-            (cliente.trim() === "") |
-            (manos.trim() === "") |
-            (pies.trim() === "") |
-            (fechaCita.trim() === "") |
-            (hora.trim() === "")
+            citas.nombre === "" ||
+            citas.manos === "" ||
+            citas.pies === "" ||
+            citas.fechaCita === "" ||
+            citas.hora === ""
         ) {
             mostrarAlerta();
-            return;
+        } else {
+            try {
+                await firebase.db.collection("citas").add({
+                    nombre: citas.nombre,
+                    apellidos: citas.apellidos,
+                    telefono: citas.telefono,
+                    manos: citas.manos,
+                    pies: citas.pies,
+                    hora: citas.hora,
+                    comentarios: citas.comentarios,
+                });
+                Alert.alert("Nueva cita", "Cita creada con exito");
+                props.navigation.navigate("citas");
+            } catch (error) {
+                console.log(error);
+                alert("Ocurrio un error al guardar los datos");
+            }
         }
-        //Crear nueva citas
-        const cita = {
-            id,
-            cliente,
-            manos,
-            pies,
-            fechaCita,
-            hora,
-            comentarios,
-        };
-
-        cita.id = shortid.generate();
-        //Agregar al state citas
-        const citasNuevo = [...citas, cita];
-        setCitas(citasNuevo);
-        //Ocultar formulario
-        guardarMostrarForm(false);
-        //Resetear formularionpm
     };
+
+    // const guardarCita = () => {
+    //     if (
+    //         (cliente.trim() === "") |
+    //         (manos.trim() === "") |
+    //         (pies.trim() === "") |
+    //         (fechaCita.trim() === "") |
+    //         (hora.trim() === "")
+    //     ) {
+    //         mostrarAlerta();
+    //         return;
+    //     }
+    //     //Crear nueva citas
+    //     const cita = {
+    //         id,
+    //         cliente,
+    //         manos,
+    //         pies,
+    //         fechaCita,
+    //         hora,
+    //         comentarios,
+    //     };
+
+    //     cita.id = shortid.generate();
+    //     //Agregar al state citas
+    //     const citasNuevo = [...citas, cita];
+    //     setCitas(citasNuevo);
+    //     //Ocultar formulario
+    //     guardarMostrarForm(false);
+    //     //Resetear formularionpm
+    // };
 
     //Mostrar alerta
     const mostrarAlerta = () => {
@@ -133,8 +173,11 @@ export default function Formulario({
         );
     };
     //Funcion minutos
-    function checkTime(i){
-        if (i<10) {i= '0' + i;}return i;
+    function checkTime(i) {
+        if (i < 10) {
+            i = "0" + i;
+        }
+        return i;
     }
     //Opciones dateTimePicker
     const onChange = (event, selectedDate) => {
@@ -142,10 +185,13 @@ export default function Formulario({
         setShow(Platform.OS === "ios");
         setDate(currentDate);
         // guardarFecha(currentDate.toLocaleDateString());
-        actualizarUseState("fecha", currentDate.toLocaleDateString());
+        // const fecha = {fechaCita: '12/12/12'}
+        // setCitas(fecha);
+        actualizarUseState('fechaCita', currentDate.toLocaleDateString())
+        console.log('Hola me estoy ejecutando' + citas.fechaCita );
         // guardarHora(checkTime(currentDate.getHours()) + ":" + checkTime(currentDate.getMinutes()));
         actualizarUseState(
-            "hora", 
+            "hora",
             checkTime(currentDate.getHours()) +
                 ":" +
                 checkTime(currentDate.getMinutes())
@@ -186,9 +232,7 @@ export default function Formulario({
                             fontSize: 17,
                         }}
                         selectedValue={clientes}
-                        onValueChange={(value) =>
-                            actualizarUseState("nombre", value)
-                        }
+                        onValueChange={(value) => guardarNombre(value)}
                     >
                         <Picker.Item
                             label="Elige nombre del cliente"
@@ -208,7 +252,7 @@ export default function Formulario({
                     <TextInput
                         style={styles.input}
                         onChangeText={(value) =>
-                            actualizarUseState("nombre", value)
+                            actualizarUseState("manos", value)
                         }
                         placeholder="Ejemplo: gel, acrilicos o nada"
                         color="black"
@@ -219,7 +263,7 @@ export default function Formulario({
                     <TextInput
                         style={styles.input}
                         onChangeText={(value) =>
-                            actualizarUseState("nombre", value)
+                            actualizarUseState("pies", value)
                         }
                         placeholder=" Ejemplo: semipermanentes, acrilicos o nada"
                         color="black"
@@ -259,14 +303,14 @@ export default function Formulario({
                         neutralButtonLabel="clear"
                     />
                 )}
-                {/* <Text style={styles.labelFH}>{hora}</Text> */}
+                <Text style={styles.labelFH}>{citas.hora}</Text>
                 <View>
                     <Text style={styles.label}>Comentarios</Text>
                     <TextInput
                         multiline
                         style={styles.input}
                         onChangeText={(value) =>
-                            actualizarUseState("nombre", value)
+                            actualizarUseState("comentarios", value)
                         }
                         keyboardType={"default"}
                         placeholder="Escribe aqui algo adicional que quieres recordar"
@@ -281,7 +325,7 @@ export default function Formulario({
                         color: "white",
                     }}
                     title="Añadir cita"
-                    onPress={() => guardarCita()}
+                    onPress={() => guardarNuevaCita()}
                     buttonStyle={{
                         backgroundColor: "#5D534A",
                         marginBottom: 20,
