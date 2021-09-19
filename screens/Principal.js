@@ -3,18 +3,25 @@ import React, { useState, useEffect } from "react";
 import { ViewComponent } from "react-native";
 import { StyleSheet, Text, View, FlatList } from "react-native";
 import { Button, Avatar } from "react-native-elements";
-import App from "../App.js";
 
 import Cita from "../componentes/Citas.js";
-import Formulario from "../componentes/Formulario.js";
+import Formulario from "../screens/Formulario.js";
+
+
 
 export default function Principal(props) {
     //Definir state de citas
+    // const hola = 10
+    // xy = hola ;
     const [citas, setCitas] = useState([
         {
             id: 1,
-            cliente: "Juana",
-            numeroCliente: "123123123",
+            cliente: {
+                id: "1",
+                nombre: "Juana",
+                apellidos: "Cubana",
+                telefono: "12121212",
+            },
             manos: "Nada",
             pies: "Gel",
             fechaCita: "12/10/2021",
@@ -23,19 +30,27 @@ export default function Principal(props) {
         },
         {
             id: 2,
-            cliente: "Maria",
-            numeroCliente: "123123123",
+            cliente: {
+                id: "1",
+                nombre: "Juana",
+                apellidos: "Cubana",
+                telefono: "12121212",
+            },
             manos: "Nada",
-            pies: "Semipermanentes",
+            pies: "Gel",
             fechaCita: "03/11/2021",
             hora: "15:20",
             comentarios: "Me debe 5 euros",
         },
         {
             id: 3,
-            cliente: "Tania",
-            numeroCliente: "123123123",
-            manos: "Gel",
+            cliente: {
+                id: "1",
+                nombre: "Juana",
+                apellidos: "Cubana",
+                telefono: "12121212",
+            },
+            manos: "Nada",
             pies: "Gel",
             fechaCita: "12/9/2021",
             hora: "15:30",
@@ -43,10 +58,14 @@ export default function Principal(props) {
         },
         {
             id: 4,
-            cliente: "Ramona",
-            numeroCliente: "123123123",
-            manos: "Seminpermanentes",
-            pies: "Nada",
+            cliente: {
+                id: "1",
+                nombre: "Juana",
+                apellidos: "Cubana",
+                telefono: "12121212",
+            },
+            manos: "Nada",
+            pies: "Gel",
             fechaCita: "12/9/2021",
             hora: "15:40",
             comentarios: "",
@@ -114,7 +133,7 @@ export default function Principal(props) {
             });
         })
 
-    const contadorFinal = 0;
+
     console.log('Cuenta' + contador)
 
     //Mostrar ocultar Formulario
@@ -198,6 +217,11 @@ export default function Principal(props) {
                               ]
                             : "No hay citas, añade una nueva"}
                     </Text>
+                    {/* {citas.map((cita) => {
+                        return(
+                            <Cita citas={cita} />
+                        )
+                    })} */}
                     
                     <FlatList
                         style={styles.flatList}
@@ -264,3 +288,4 @@ const styles = StyleSheet.create({
         justifyContent: "space-around",
     },
 });
+

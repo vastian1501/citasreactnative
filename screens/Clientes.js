@@ -1,8 +1,42 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Text, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { Button } from "react-native-elements";
 
-export const Clientes = () => {
+import firebase from '../database/Firebase'
+
+export const Clientes = (props) => {
+    const [cliente, setCliente] = useState({
+        nombre:'',
+        apellidos:'',
+        telefono:''
+    })
+
+    const actualizarUseState = (name, value) => {
+        setCliente({ ...cliente, [name]: value });
+    };
+
+    const guardarNuevoCliente = async () => {
+        if (
+            cliente.nombre === "" ||
+            cliente.apellidos === "" ||
+            cliente.telefono === ""
+        ) {
+            alert("Rellene todos los campos");
+        } else {
+            try {
+                await firebase.db.collection("clientes").add({
+                    nombre: cliente.nombre,
+                    apellidos: cliente.apellidos,
+                    telefono: cliente.telefono,
+                });
+                alert("Nuevo cliente añadido");
+                props.navigation.navigate("listaClientes");
+            } catch (error) {
+                console.log(error);
+                alert("Ocurrio un error al guardar los datos");
+            }
+        }
+    };
     return (
         <>
             <ScrollView style={styles.formulario}>
@@ -10,9 +44,11 @@ export const Clientes = () => {
                     <Text style={styles.label}>Nombre</Text>
                     <TextInput
                         style={styles.input}
-                        onChangeText={(texto) => guardarManos(texto)}
                         placeholder="Nombre del cliente"
                         color="black"
+                        onChangeText={(value) =>
+                            actualizarUseState("nombre", value)
+                        }
                     />
                 </View>
 
@@ -20,22 +56,26 @@ export const Clientes = () => {
                     <Text style={styles.label}>Apellidos</Text>
                     <TextInput
                         style={styles.input}
-                        onChangeText={(texto) => guardarManos(texto)}
                         placeholder="Apellidos"
                         color="black"
+                        onChangeText={(value) =>
+                            actualizarUseState("apellidos", value)
+                        }
                     />
                 </View>
                 <View>
                     <Text style={styles.label}>Telefono</Text>
                     <TextInput
                         style={styles.input}
-                        onChangeText={(texto) => guardarPies(texto)}
                         placeholder=" Introduce su telefono"
                         keyboardType="numeric"
                         color="black"
+                        onChangeText={(value) =>
+                            actualizarUseState("telefono", value)
+                        }
                     />
                 </View>
-                
+
                 <Button
                     style={{ margin: 10 }}
                     icon={{
@@ -44,7 +84,7 @@ export const Clientes = () => {
                         color: "white",
                     }}
                     title="Guardar cliente"
-                    onPress={() => guardarCita()}
+                    onPress={() => guardarNuevoCliente()}
                     buttonStyle={{
                         backgroundColor: "#5D534A",
                         marginBottom: 20,

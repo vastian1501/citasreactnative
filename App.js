@@ -5,12 +5,16 @@ import { StyleSheet, Text, View, FlatList } from "react-native";
 import { Button, Avatar } from "react-native-elements";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createStackNavigator } from "@react-navigation/stack";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
-import Principal from './screens/Principal';
+import Principal, {xy}from './screens/Principal';
 import Formulario from './screens/Formulario';
 import { Clientes } from "./screens/Clientes";
+import { ListaClientes } from "./screens/ListaClientes";
+import { DetallesCliente } from "./screens/DetallesCliente";
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
 
 export default function App() {
     const fecha = Date.now();
@@ -68,6 +72,7 @@ export default function App() {
                     component={Formulario}
                     options={{
                         tabBarLabel: "Nueva Cita",
+                        headerTitle: "Lulys Nails",
                         tabBarIcon: ({ color, size }) => (
                             <MaterialCommunityIcons
                                 name="note-plus"
@@ -78,10 +83,11 @@ export default function App() {
                     }}
                 />
                 <Tab.Screen
-                    name="nuevoCliente"
-                    component={Clientes}
+                    name="clientesTabs"
+                    component={ClientesTabs}
                     options={{
-                        tabBarLabel: "Nuevo Cliente",
+                        headerShown: false,
+                        tabBarLabel: "Clientes",
                         tabBarIcon: ({ color, size }) => (
                             <MaterialCommunityIcons
                                 name="account-plus-outline"
@@ -93,6 +99,32 @@ export default function App() {
                 />
             </Tab.Navigator>
         </NavigationContainer>
+    );
+}
+
+function ClientesTabs() {
+    return (
+        <Stack.Navigator
+            // screenOptions={{
+            //     headerShown: false,
+            // }}
+        >
+            <Stack.Screen
+                name="listaClientes"
+                component={ListaClientes}
+                options={{ title: "Lulys Nails" }}
+            />
+            <Stack.Screen
+                name="nuevoCliente"
+                component={Clientes}
+                options={{ title: "Crear nuevo cliente" }}
+            />
+            <Stack.Screen
+                name="detallesCliente"
+                component={DetallesCliente}
+                options={{ title: "Informacion del cliente" }}
+            />
+        </Stack.Navigator>
     );
 }
 

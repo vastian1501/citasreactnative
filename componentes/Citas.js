@@ -9,26 +9,29 @@ export default function Citas({item, eliminarCitas}) {
         console.log('Eliminando...', id);
         eliminarCitas(id);
     }
-    const fechaNuevaCita= new Date(item.fechaCita);
-
+    
+    //Funcion para mandar Whatsapp
     const sendWhatsApp = () => {
-    let phoneWithCountryCode = item.numeroCliente ;
-
-    let mobile = Platform.OS == 'ios' ? phoneWithCountryCode : '+34' + phoneWithCountryCode;
-    if (mobile) {
-        let url = 'whatsapp://send?' + 'phone=' + mobile;
-        Linking.openURL(url).then((data) => {
-        }).catch(() => {
-          alert('Make sure WhatsApp installed on your device');
-        });
-    } else {
-      alert('Please insert mobile no');
+        let phoneWithCountryCode = item.cliente.numero ;
+        
+        let mobile = Platform.OS == 'ios' ? phoneWithCountryCode : '+34' + phoneWithCountryCode;
+        if (mobile) {
+            let url = 'whatsapp://send?' + 'phone=' + mobile;
+            Linking.openURL(url).then((data) => {
+            }).catch(() => {
+                alert('Make sure WhatsApp installed on your device');
+            });
+        } else {
+            alert('Please insert mobile no');
+        }
     }
-  }
+    
+    const fechaNuevaCita= new Date(item.fechaCita);
+    
     return (
         <View style={styles.cita}>
             <Text style={styles.listaTitulo}>Cliente:</Text>
-            <Text style={styles.lista}>{item.cliente}</Text>
+            <Text style={styles.lista}>{item.cliente.nombre}</Text>
             <Text style={styles.listaTitulo}>Manos:</Text>
             <Text style={styles.lista}>{item.manos}</Text>
             <Text style={styles.listaTitulo}>Pies:</Text>

@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Card, ListItem, Button } from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
 import shortid from "shortid";
+import firebase from '../database/Firebase'
+
 import {
     Image,
     StyleSheet,
@@ -16,51 +18,77 @@ import {
 } from "react-native";
 
 export default function Formulario({
-    citas,
-    setCitas,
+    citass,
+    setCitass,
     guardarMostrarForm,
 }) {
-    const [clientes, setClientes] = useState([
-        {
-            id: 0,
-            nombreCliente: "Prueba",
-            telefonoCliente: "123123123",
-        },
-        {
-            id: 1,
-            nombreCliente: "Tania",
-            telefonoCliente: "123123123",
-        },
-        {
-            id: 2,
-            nombreCliente: "Juana",
-            telefonoCliente: "222222222",
-        },
-        {
-            id: 3,
-            nombreCliente: "Pancracia",
-            telefonoCliente: "3333333",
-        },
-        {
-            id: 4,
-            nombreCliente: "Antonia",
-            telefonoCliente: "123123123",
-        },
-    ]);
 
-    const [cliente, guardarNombre] = useState("");
-    const [manos, guardarManos] = useState("");
-    const [pies, guardarPies] = useState("");
-    const [fechaCita, guardarFecha] = useState("");
-    const [hora, guardarHora] = useState("");
-    const [comentarios, guardarComentarios] = useState("");
+    
+    const [clientes, setClientes] = useState([]);
+
+    useEffect(() => {
+        firebase.db.collection("clientes").onSnapshot((querySnapshot) => {
+            const clientes = [];
+
+            querySnapshot.docs.forEach((doc) => {
+                const { nombre, apellidos, telefono } = doc.data();
+                clientes.push({
+                    id: doc.id,
+                    nombre,
+                    apellidos,
+                    telefono,
+                });
+            });
+
+            setClientes(clientes);
+        });
+    }, []);
 
     const [isSelected, setSelection] = useState(false);
     const fecha = Date.now();
     const [date, setDate] = useState(new Date(fecha));
     const [mode, setMode] = useState("time");
     const [show, setShow] = useState(false);
+
+    
+    
     //Guardar Cita
+    //Esto esta pendiente, hay que obtener el id del cliente seleccionado y pasarlo al state citas {cliente}
+    // nose como se hace por eso lo dejo aqui, 
+
+    const [citas, setCitas] = useState({
+            cliente: {
+                id: "",
+                nombre: "",
+                apellidos: "",
+                telefono: "",
+            },
+            manos: "",
+            pies: "",
+            fechaCita: "",
+            hora: "",
+            comentarios: "",
+    })
+
+    const actualizarUseState = (name, value) => {
+        setCitas({ ...citas, [name]: value });
+    };
+
+    const guardarNombre = (item) => {
+        firebase.db.collection("clientes")
+            .where("id", "==", item)
+            .get()
+            .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    // doc.data() is never undefined for query doc snapshots
+                    console.log(doc.id, " => ", doc.data());
+                });
+            })
+            .catch((error) => {
+                console.log("Error getting documents: ", error);
+            });
+    }
+
     const guardarCita = () => {
         if (
             (cliente.trim() === "") |
@@ -74,6 +102,7 @@ export default function Formulario({
         }
         //Crear nueva citas
         const cita = {
+            id,
             cliente,
             manos,
             pies,
@@ -81,6 +110,7 @@ export default function Formulario({
             hora,
             comentarios,
         };
+
         cita.id = shortid.generate();
         //Agregar al state citas
         const citasNuevo = [...citas, cita];
@@ -111,8 +141,15 @@ export default function Formulario({
         const currentDate = selectedDate || date;
         setShow(Platform.OS === "ios");
         setDate(currentDate);
-        guardarFecha(currentDate.toLocaleDateString());
-        guardarHora(checkTime(currentDate.getHours()) + ":" + checkTime(currentDate.getMinutes()));
+        // guardarFecha(currentDate.toLocaleDateString());
+        actualizarUseState("fecha", currentDate.toLocaleDateString());
+        // guardarHora(checkTime(currentDate.getHours()) + ":" + checkTime(currentDate.getMinutes()));
+        actualizarUseState(
+            "hora", 
+            checkTime(currentDate.getHours()) +
+                ":" +
+                checkTime(currentDate.getMinutes())
+        );
     };
 
     const fechaNormalCita = new Date(date);
@@ -148,19 +185,19 @@ export default function Formulario({
                             fontFamily: "Ebrima",
                             fontSize: 17,
                         }}
-                        selectedValue={cliente}
-                        onValueChange={(itemValue, itemIndex) =>
-                            guardarNombre(itemValue)
+                        selectedValue={clientes}
+                        onValueChange={(value) =>
+                            actualizarUseState("nombre", value)
                         }
                     >
                         <Picker.Item
                             label="Elige nombre del cliente"
                             value=""
                         />
-                        {clientes.map((nombresito) => (
+                        {clientes.map((cliente) => (
                             <Picker.Item
-                                label={nombresito.nombreCliente}
-                                value={nombresito.nombreCliente}
+                                label={cliente.nombre + " " + cliente.apellidos}
+                                value={cliente.id}
                             />
                         ))}
                     </Picker>
@@ -170,7 +207,9 @@ export default function Formulario({
                     <Text style={styles.label}>Manos</Text>
                     <TextInput
                         style={styles.input}
-                        onChangeText={(texto) => guardarManos(texto)}
+                        onChangeText={(value) =>
+                            actualizarUseState("nombre", value)
+                        }
                         placeholder="Ejemplo: gel, acrilicos o nada"
                         color="black"
                     />
@@ -179,7 +218,9 @@ export default function Formulario({
                     <Text style={styles.label}>Pies</Text>
                     <TextInput
                         style={styles.input}
-                        onChangeText={(texto) => guardarPies(texto)}
+                        onChangeText={(value) =>
+                            actualizarUseState("nombre", value)
+                        }
                         placeholder=" Ejemplo: semipermanentes, acrilicos o nada"
                         color="black"
                     />
@@ -218,13 +259,15 @@ export default function Formulario({
                         neutralButtonLabel="clear"
                     />
                 )}
-                <Text style={styles.labelFH}>{hora}</Text>
+                {/* <Text style={styles.labelFH}>{hora}</Text> */}
                 <View>
                     <Text style={styles.label}>Comentarios</Text>
                     <TextInput
                         multiline
                         style={styles.input}
-                        onChangeText={(texto) => guardarComentarios(texto)}
+                        onChangeText={(value) =>
+                            actualizarUseState("nombre", value)
+                        }
                         keyboardType={"default"}
                         placeholder="Escribe aqui algo adicional que quieres recordar"
                         color="black"
