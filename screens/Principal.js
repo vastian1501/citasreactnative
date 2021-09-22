@@ -3,74 +3,48 @@ import React, { useState, useEffect } from "react";
 import { ViewComponent } from "react-native";
 import { StyleSheet, Text, View, FlatList } from "react-native";
 import { Button, Avatar } from "react-native-elements";
-
-import Cita from "../componentes/Citas.js";
+import Citas from "../componentes/Citas.js";
+import firebase from "../database/Firebase.js";
 import Formulario from "../screens/Formulario.js";
 
 
 
 export default function Principal(props) {
-    //Definir state de citas
-    // const hola = 10
-    // xy = hola ;
-    const [citas, setCitas] = useState([
-        {
-            id: 1,
-            cliente: {
-                id: "1",
-                nombre: "Juana",
-                apellidos: "Cubana",
-                telefono: "12121212",
-            },
-            manos: "Nada",
-            pies: "Gel",
-            fechaCita: "12/10/2021",
-            hora: "15:00",
-            comentarios: "655165118",
-        },
-        {
-            id: 2,
-            cliente: {
-                id: "1",
-                nombre: "Juana",
-                apellidos: "Cubana",
-                telefono: "12121212",
-            },
-            manos: "Nada",
-            pies: "Gel",
-            fechaCita: "03/11/2021",
-            hora: "15:20",
-            comentarios: "Me debe 5 euros",
-        },
-        {
-            id: 3,
-            cliente: {
-                id: "1",
-                nombre: "Juana",
-                apellidos: "Cubana",
-                telefono: "12121212",
-            },
-            manos: "Nada",
-            pies: "Gel",
-            fechaCita: "12/9/2021",
-            hora: "15:30",
-            comentarios: "Me debe 5 euros",
-        },
-        {
-            id: 4,
-            cliente: {
-                id: "1",
-                nombre: "Juana",
-                apellidos: "Cubana",
-                telefono: "12121212",
-            },
-            manos: "Nada",
-            pies: "Gel",
-            fechaCita: "12/9/2021",
-            hora: "15:40",
-            comentarios: "",
-        },
-    ]);
+
+    const [citas, setCitas] = useState([]);
+
+    useEffect(() => {
+        firebase.db.collection("citas").onSnapshot((querySnapshot) => {
+            const citas = [];
+
+            querySnapshot.docs.forEach((doc) => {
+                const {
+                    nombre,
+                    apellidos,
+                    telefono,
+                    manos,
+                    pies,
+                    fecha,
+                    hora,
+                    comentarios,
+                } = doc.data();
+
+                citas.push({
+                    id: doc.id,
+                    nombre,
+                    apellidos,
+                    telefono,
+                    manos,
+                    pies,
+                    fecha,
+                    hora,
+                    comentarios,
+                });
+            });
+
+            setCitas(citas);
+        });
+    }, []);
 
     //Contador de citas para hoy 
     const [contador, setContador] = useState(0);
@@ -100,7 +74,7 @@ export default function Principal(props) {
         "Sabado",
     ];
     const fechaNueva =
-        hoy.getMonth() + 1 + "/" + hoy.getDate() + "/" + hoy.getFullYear();
+        hoy.getMonth() + 1 + '/'+ hoy.getDate() + "/" + hoy.getFullYear();
         
     console.log(fechaNueva);
 
@@ -122,11 +96,11 @@ export default function Principal(props) {
     var incremento = 0;
     useEffect(() => {
             citas.map((cita) => {
-                Date.parse(cita.fechaCita);
-                if (Date.parse(cita.fechaCita) === Date.parse(fechaNueva)) {
+                console.log('Fehca cita' + cita.fecha)
+                if (Date.parse(cita.fecha) === Date.parse(fechaNueva)) {
                     incremento++;
                 }
-                console.log("Fecha cita " + cita.fechaCita);
+                console.log("Fecha cita parse " + new Date(cita.fecha));
                 console.log("Esto incrementa" + incremento);
                 setContador(incremento);
                 return incremento;
@@ -144,68 +118,7 @@ export default function Principal(props) {
     
     return (
         <View style={styles.fondo}>
-            <Avatar
-                size="medium"
-                rounded
-                overlayContainerStyle={{ backgroundColor: "#5D534A" }}
-                onPress={() => mostrarOcultarForm()}
-                activeOpacity={1}
-                icon={{ name: "post-add", type: "material" }}
-                containerStyle={{
-                    zIndex: 3,
-                    flex: 0,
-                    position: "absolute",
-                    left: 350,
-                    right: 0,
-                    bottom: 10,
-                }}
-            />
-
-            {mostrarForm ? (
-                <>
-                    <Text style={styles.subtitulo}>Crear nueva cita</Text>
-                    <View style={styles.botonesHeader}>
-                        <Button
-                            icon={{
-                                name: "list-alt",
-                                size: 30,
-                                color: "white",
-                            }}
-                            title={mostrarForm ? "Ver todas las citas" : "ADD"}
-                            onPress={() => mostrarOcultarForm()}
-                            buttonStyle={{
-                                padding: 10,
-                                marginHorizontal: 100,
-                                backgroundColor: "#5D534A",
-                            }}
-                            titleStyle={{ color: "white" }}
-                            type="clear"
-                        />
-                        <Button
-                            icon={{
-                                name: "person-add",
-                                size: 30,
-                                color: "white",
-                            }}
-                            title="Añadir cliente"
-                            onPress={() => mostrarOcultarForm()}
-                            buttonStyle={{
-                                padding: 10,
-                                marginHorizontal: 100,
-                                backgroundColor: "#5D534A",
-                            }}
-                            titleStyle={{ color: "white" }}
-                            type="clear"
-                        />
-                    </View>
-
-                    <Formulario
-                        citas={citas}
-                        setCitas={setCitas}
-                        guardarMostrarForm={guardarMostrarForm}
-                    />
-                </>
-            ) : (
+            
                 <>
                     <Text style={styles.subtituloCP}>
                         {citas.length > 0
@@ -223,20 +136,8 @@ export default function Principal(props) {
                         )
                     })} */}
                     
-                    <FlatList
-                        style={styles.flatList}
-                        data={citas.sort(function (a, b) {
-                            var c = new Date(a.fechaCita);
-                            var d = new Date(b.fechaCita);
-                            return c - d;
-                        })}
-                        renderItem={({ item }) => (
-                            <Cita item={item} eliminarCitas={eliminarCitas} />
-                        )}
-                        keyExtractor={(item) => item.id.toString()}
-                    />
+                    <Citas citas={citas} />
                 </>
-            )}
         </View>
     );
 }

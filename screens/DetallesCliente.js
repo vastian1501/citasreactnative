@@ -41,7 +41,7 @@ export const DetallesCliente = (props) => {
             .collection("clientes")
             .doc(props.route.params.userId);
         await dbRef.delete();
-        props.navigation.navigate("listaUsuario");
+        props.navigation.navigate("listaClientes");
     };
 
     const actualizarUser = async () => {

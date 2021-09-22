@@ -22,12 +22,27 @@ export const ListaClientes = (props) => {
             });
 
             setClientes(clientes);
+
+            const sortByName = () => {
+                const sortClientes = [...clientes].sort((a, b) => {
+                    if (a.nombre.toLowerCase() < b.nombre.toLowerCase()) {
+                        return -1;
+                    }
+                    if (a.nombre.toLowerCase() > b.nombre.toLowerCase()) {
+                        return 1;
+                    }
+                    return 0;
+                });
+                setClientes(sortClientes);
+            };
+            sortByName();
         });
     }, []);
     return (
         <ScrollView>
             <Button
                 title="Añadir nuevo cliente"
+                color="red"
                 onPress={() => props.navigation.navigate("nuevoCliente")}
             />
             {clientes.map((cliente) => {
@@ -44,7 +59,7 @@ export const ListaClientes = (props) => {
                         <Avatar
                             rounded
                             source={{
-                                uri: "https://reactnativeelements.com/img/avatar/avatar--photo.jpg",
+                                uri: "https://i.pinimg.com/474x/55/3f/d8/553fd8bb36937cbb266a3fe2f5d70fae.jpg",
                             }}
                         />
                         <ListItem.Content>

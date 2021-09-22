@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { Card, ListItem, Button } from "react-native-elements";
+import { Card, ListItem, Button, Input } from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
 import shortid from "shortid";
 import firebase from "../database/Firebase";
@@ -17,7 +17,9 @@ import {
     Alert,
 } from "react-native";
 
-export default function Formulario(props,{ citass, setCitass, guardarMostrarForm }) {
+export default function Formulario(
+    props
+) {
     const [clientes, setClientes] = useState([]);
 
     useEffect(() => {
@@ -55,13 +57,27 @@ export default function Formulario(props,{ citass, setCitass, guardarMostrarForm
         telefono: "",
         manos: "",
         pies: "",
+        fechaCita: "",
         hora: "",
         comentarios: "",
     });
 
+    const [manos, guardarManos] = useState("");
+    const [pies, guardarPies] = useState("");
+    const [fechaCita, guardarFecha] = useState("");
+    const [hora, guardarHora] = useState("");
+    const [comentarios, guardarComentarios] = useState("");
+
+    // const [fechaCita, setFechaCita] = useState({
+    //     fecha: "",
+    // });
+
     const actualizarUseState = (name, value) => {
         setCitas({ ...citas, [name]: value });
     };
+    // const actualizarUseStateFecha = (name, value) => {
+    //     setFechaCita({ ...fechaCita, [name]: value });
+    // };
 
     //Funcion setState para gaurdar objecto dentro de un objeto
     // const actualizarUseStateCliente = (name, value) => {
@@ -103,10 +119,11 @@ export default function Formulario(props,{ citass, setCitass, guardarMostrarForm
         // setLoading(true);
         if (
             citas.nombre === "" ||
-            citas.manos === "" ||
-            citas.pies === "" ||
-            citas.fechaCita === "" ||
-            citas.hora === ""
+            manos === "" ||
+            pies === "" ||
+            fechaCita === "" ||
+            hora === "" ||
+            comentarios === ""
         ) {
             mostrarAlerta();
         } else {
@@ -115,10 +132,11 @@ export default function Formulario(props,{ citass, setCitass, guardarMostrarForm
                     nombre: citas.nombre,
                     apellidos: citas.apellidos,
                     telefono: citas.telefono,
-                    manos: citas.manos,
-                    pies: citas.pies,
-                    hora: citas.hora,
-                    comentarios: citas.comentarios,
+                    manos: manos,
+                    pies: pies,
+                    fecha: fechaCita,
+                    hora: hora,
+                    comentarios: comentarios
                 });
                 Alert.alert("Nueva cita", "Cita creada con exito");
                 props.navigation.navigate("citas");
@@ -187,15 +205,31 @@ export default function Formulario(props,{ citass, setCitass, guardarMostrarForm
         // guardarFecha(currentDate.toLocaleDateString());
         // const fecha = {fechaCita: '12/12/12'}
         // setCitas(fecha);
-        actualizarUseState('fechaCita', currentDate.toLocaleDateString())
-        console.log('Hola me estoy ejecutando' + citas.fechaCita );
         // guardarHora(checkTime(currentDate.getHours()) + ":" + checkTime(currentDate.getMinutes()));
-        actualizarUseState(
-            "hora",
+        guardarHora(
             checkTime(currentDate.getHours()) +
                 ":" +
                 checkTime(currentDate.getMinutes())
         );
+        // const fechaGuardar = currentDate.toLocaleDateString().toString();
+        // actualizarUseStateFecha("fecha", fechaGuardar);
+        const hoy = new Date(currentDate);
+        const dias = [
+            "Domingo",
+            "Lunes",
+            "Martes",
+            "Miercoles",
+            "Jueves",
+            "Viernes",
+            "Sabado",
+        ];
+
+        guardarFecha(
+            // dias[hoy.getDay()] +
+            //     " " +
+                hoy.getMonth() + 1 + '/'+ hoy.getDate() + "/" + hoy.getFullYear()
+        );
+        console.log("Hola me estoy ejecutando" + fechaCita);
     };
 
     const fechaNormalCita = new Date(date);
@@ -252,7 +286,7 @@ export default function Formulario(props,{ citass, setCitass, guardarMostrarForm
                     <TextInput
                         style={styles.input}
                         onChangeText={(value) =>
-                            actualizarUseState("manos", value)
+                            guardarManos(value)
                         }
                         placeholder="Ejemplo: gel, acrilicos o nada"
                         color="black"
@@ -263,7 +297,7 @@ export default function Formulario(props,{ citass, setCitass, guardarMostrarForm
                     <TextInput
                         style={styles.input}
                         onChangeText={(value) =>
-                            actualizarUseState("pies", value)
+                            guardarPies(value)
                         }
                         placeholder=" Ejemplo: semipermanentes, acrilicos o nada"
                         color="black"
@@ -271,21 +305,24 @@ export default function Formulario(props,{ citass, setCitass, guardarMostrarForm
                 </View>
                 <View>
                     <Text style={styles.label}>Fecha</Text>
+                    <Text style={styles.labelFH}>
+                        {/* {fechaNormalCita.getDate() +
+                        "/" +
+                        (fechaNormalCita.getMonth() + 1) +
+                        "/" +
+                        fechaNormalCita.getFullYear()} */}
+                        {fechaCita}
+                    </Text>
                     <Button
                         onPress={() => showMode("date")}
                         title="Seleccionar fecha"
                         buttonStyle={{ backgroundColor: "#D6D2C4", margin: 10 }}
                     />
                 </View>
-                <Text style={styles.labelFH}>
-                    {fechaNormalCita.getDate() +
-                        "/" +
-                        (fechaNormalCita.getMonth() + 1) +
-                        "/" +
-                        fechaNormalCita.getFullYear()}
-                </Text>
+
                 <View>
                     <Text style={styles.label}>Hora</Text>
+                    <Text style={styles.labelFH}>{hora}</Text>
                     <Button
                         onPress={() => showMode("time")}
                         title="Seleccionar hora"
@@ -303,19 +340,23 @@ export default function Formulario(props,{ citass, setCitass, guardarMostrarForm
                         neutralButtonLabel="clear"
                     />
                 )}
-                <Text style={styles.labelFH}>{citas.hora}</Text>
+
                 <View>
                     <Text style={styles.label}>Comentarios</Text>
                     <TextInput
                         multiline
                         style={styles.input}
                         onChangeText={(value) =>
-                            actualizarUseState("comentarios", value)
+                            guardarComentarios(value)
                         }
                         keyboardType={"default"}
                         placeholder="Escribe aqui algo adicional que quieres recordar"
                         color="black"
                     />
+                    {/* <Input
+                        placeholder="Comment"
+                        leftIcon={{ type: "font-awesome", name: "comment" }}
+                    /> */}
                 </View>
                 <Button
                     style={{ margin: 10 }}

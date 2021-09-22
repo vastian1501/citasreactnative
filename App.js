@@ -8,15 +8,52 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
-import Principal, {xy}from './screens/Principal';
+import Principal from './screens/Principal';
 import Formulario from './screens/Formulario';
 import { Clientes } from "./screens/Clientes";
 import { ListaClientes } from "./screens/ListaClientes";
 import { DetallesCliente } from "./screens/DetallesCliente";
+import firebase from "./database/Firebase";
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
 export default function App() {
+
+const [citas, setCitas] = useState([]);
+
+useEffect(() => {
+    firebase.db.collection("citas").onSnapshot((querySnapshot) => {
+        const citas = [];
+
+        querySnapshot.docs.forEach((doc) => {
+            const {
+                nombre,
+                apellidos,
+                telefono,
+                manos,
+                pies,
+                fecha,
+                hora,
+                comentarios,
+            } = doc.data();
+
+            citas.push({
+                id: doc.id,
+                nombre,
+                apellidos,
+                telefono,
+                manos,
+                pies,
+                fecha,
+                hora,
+                comentarios,
+            });
+        });
+
+        setCitas(citas);
+    });
+}, []);
+
     const fecha = Date.now();
     const hoy = new Date(fecha);
     const options = {
@@ -42,6 +79,25 @@ export default function App() {
         (hoy.getMonth() + 1) +
         "/" +
         hoy.getFullYear();
+
+         const fechaNuevaDos =
+             hoy.getMonth() + 1 + "/" + hoy.getDate() + "/" + hoy.getFullYear();
+
+    //TapBager con citas de hoy
+
+    const [contador, setContador] = useState(0);
+    var incremento = 0;
+    useEffect(() => {
+        citas.map((cita) => {
+            console.log("Fehca cita" + cita.fecha);
+            if (Date.parse(cita.fecha) === Date.parse(fechaNuevaDos)) {
+                incremento++;
+            }
+            console.log('incemento' + incremento)
+            setContador(incremento);
+            return incremento;
+        });
+    });
     return (
         <NavigationContainer>
             <Tab.Navigator>
@@ -49,7 +105,7 @@ export default function App() {
                     name="citas"
                     component={Principal}
                     options={{
-                        tabBarBadge: 3,
+                        tabBarBadge: contador,
                         headerRight: () => (
                             <View style={{ marginRight: 20 }}>
                                 <Text>{fechaNueva}</Text>
