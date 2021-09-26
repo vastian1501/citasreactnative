@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "citas",
-    "slug": "citas",
+    "name": "Lulys Nails",
+    "slug": "lulys-nails-citas",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -20,6 +20,8 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.atienciasa.lulysnails",
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
@@ -30,3 +32,4 @@
     }
   }
 }
+

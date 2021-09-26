@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
     subtituloCP: {
         textAlign: "center",
         marginTop: 10,
-        fontSize: 20,
+        fontSize: 15,
         padding: 10,
         fontWeight: "300",
         color: "#FFFF",

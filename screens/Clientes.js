@@ -43,7 +43,7 @@ export const Clientes = (props) => {
                 <View>
                     <Text style={styles.label}>Nombre</Text>
                     <Input
-                        placeholder="Ej: Sara"
+                        placeholder="Sara"
                         leftIcon={{
                             type: "font-awesome",
                             name: "user",
@@ -55,7 +55,7 @@ export const Clientes = (props) => {
                     />
                     <Text style={styles.label}>Apellidos</Text>
                     <Input
-                        placeholder="Ej: Tancredi Burrows"
+                        placeholder="Tancredi Burrows"
                         leftIcon={{
                             type: "font-awesome",
                             name: "user",
@@ -67,7 +67,7 @@ export const Clientes = (props) => {
                     />
                     <Text style={styles.label}>Número</Text>
                     <Input
-                        placeholder="Ej: 655655655"
+                        placeholder="655655655"
                         keyboardType="numeric"
                         leftIcon={{
                             type: "font-awesome",
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
     label: {
         textAlign: "left",
         fontWeight: "bold",
-        fontSize: 18,
+        fontSize: 15,
         color: "#5D534A",
         marginTop: 5,
         marginLeft: 10,
@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
     },
     formulario: {
-        backgroundColor: "#fdffb6",
+        backgroundColor: "#FFCAD4",
         paddingTop: 30,
         margin: 10,
         paddingVertical: 10,
@@ -140,6 +140,5 @@ const styles = StyleSheet.create({
         shadowRadius: 4.65,
 
         elevation: 8,
-        borderRadius: 5,
     },
 });

@@ -235,7 +235,7 @@ export default function Formulario(
         <>
             <ScrollView style={styles.formulario}>
                 <View>
-                    <Text style={styles.label}>Nombre</Text>
+                    <Text style={styles.labelTitulo}>Nueva Cita</Text>
 
                     <Picker
                         style={{
@@ -267,9 +267,9 @@ export default function Formulario(
                 </View>
 
                 <View>
-                    <Text style={styles.label}>Manos</Text>
                     <Input
-                        placeholder="Ej: gel, acrilicos o nada"
+                        placeholder="Manos: gel, acrilicos, etc o nada"
+                        inputStyle={{ fontSize: 15 }}
                         ref={inputNombre}
                         leftIcon={{
                             type: "entypo",
@@ -280,10 +280,10 @@ export default function Formulario(
                     />
                 </View>
                 <View>
-                    <Text style={styles.label}>Pies</Text>
                     <Input
-                        placeholder="Ej: gel, acrilicos o nada"
+                        placeholder="  Pies: gel, acrilicos, etc o nada"
                         ref={inputApellidos}
+                        inputStyle={{ fontSize: 15 }}
                         leftIcon={{
                             type: "foundation",
                             name: "foot",
@@ -293,7 +293,6 @@ export default function Formulario(
                     />
                 </View>
                 <View>
-                    <Text style={styles.label}>Fecha</Text>
                     <Text style={styles.labelFH}>
                         {/* {fechaNormalCita.getDate() +
                         "/" +
@@ -305,6 +304,7 @@ export default function Formulario(
                     <Button
                         onPress={() => showMode("date")}
                         title="Seleccionar fecha"
+                        titleStyle={{ fontSize: 15 }}
                         leftIcon={{
                             type: "foundation",
                             name: "foot",
@@ -318,11 +318,11 @@ export default function Formulario(
                 </View>
 
                 <View>
-                    <Text style={styles.label}>Hora</Text>
                     <Text style={styles.labelFH}>{hora}</Text>
                     <Button
                         onPress={() => showMode("time")}
                         title="Seleccionar hora"
+                        titleStyle={{ fontSize: 14 }}
                         leftIcon={{
                             type: "foundation",
                             name: "foot",
@@ -347,10 +347,10 @@ export default function Formulario(
                 )}
 
                 <View>
-                    <Text style={styles.label}>Comentarios</Text>
                     <Input
-                        placeholder="Escribe algo que quieras recordar, o no"
+                        placeholder="Escribe un comentario, o no"
                         ref={inputComentarios}
+                        inputStyle={{ fontSize: 15 }}
                         leftIcon={{
                             type: "font-awesome",
                             name: "comment",
@@ -385,7 +385,15 @@ const styles = StyleSheet.create({
     label: {
         textAlign: "left",
         fontWeight: "bold",
-        fontSize: 18,
+        fontSize: 15,
+        color: "#5D534A",
+        marginTop: 5,
+        marginLeft: 10,
+    },
+    labelTitulo: {
+        textAlign: "center",
+        fontWeight: "bold",
+        fontSize: 15,
         color: "#5D534A",
         marginTop: 5,
         marginLeft: 10,
@@ -408,10 +416,10 @@ const styles = StyleSheet.create({
     },
     formulario: {
         flex: 1,
-        backgroundColor: "#fdffb6",
+        backgroundColor: "#FFCAD4",
         paddingTop: 10,
         margin: 10,
-        paddingVertical: 20,
+        paddingVertical: 0,
         shadowColor: "#000",
         shadowOffset: {
             width: 0,
@@ -421,6 +429,5 @@ const styles = StyleSheet.create({
         shadowRadius: 4.65,
 
         elevation: 8,
-        borderRadius: 5,
     },
 });

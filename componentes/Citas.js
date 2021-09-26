@@ -108,28 +108,27 @@ export default function Citas(props) {
             {citas.map((cita) => {
                 return (
                     <View style={styles.cita} key={cita.id}>
-                        <Text style={styles.listaTitulo}>Cliente:</Text>
-                        <Text style={styles.lista}>
-                            {cita.nombre} {cita.apellidos}
-                        </Text>
+                        <View style={styles.subcita}>
+                            <Text style={styles.listaTituloInicio}>
+                                {cita.fecha} | {cita.hora}
+                            </Text>
+                            <Text style={styles.listaTituloSubInicio}>
+                                {cita.nombre} {cita.apellidos}
+                            </Text>
+                        </View>
                         <Text style={styles.listaTitulo}>Manos:</Text>
                         <Text style={styles.lista}>{cita.manos}</Text>
                         <Text style={styles.listaTitulo}>Pies:</Text>
                         <Text style={styles.lista}>{cita.pies}</Text>
-                        <Text style={styles.listaTitulo}>
-                            Fecha de la cita:
-                        </Text>
-                        <Text style={styles.lista}>{cita.fecha}</Text>
-                        <Text style={styles.listaTitulo}>Hora:</Text>
-                        <Text style={styles.lista}>{cita.hora}</Text>
                         <Text style={styles.listaTitulo}>Comentarios:</Text>
                         <Text style={styles.lista}>{cita.comentarios}</Text>
                         <View style={styles.contenedor}>
                             <Button
-                                color={"red"}
+                                titleStyle={{ fontSize: 15 }}
                                 buttonStyle={{
                                     backgroundColor: "#5D534A",
                                     margin: 0,
+                                    padding: 5,
                                 }}
                                 icon={
                                     <Icon
@@ -150,9 +149,12 @@ export default function Citas(props) {
 
                             <Button
                                 color={"red"}
+                                titleStyle={{ fontSize: 15 }}
                                 buttonStyle={{
                                     backgroundColor: "#69c269",
                                     margin: 0,
+                                    padding: 5,
+                                    fontSize: 5,
                                 }}
                                 icon={
                                     <Icon
@@ -166,20 +168,21 @@ export default function Citas(props) {
                                 title="WhatsApp"
                             />
                             <Button
+                                titleStyle={{ fontSize: 15 }}
                                 buttonStyle={{
                                     backgroundColor: "#FF6961",
                                     margin: 0,
+                                    padding: 5,
                                 }}
                                 icon={
                                     <Icon
                                         name="trash"
                                         size={20}
                                         color="white"
-                                        style={{ marginRight: 5 }}
+                                        style={{ margin: 1.5 }}
                                     />
                                 }
                                 onPress={() => confirnmDelete(cita.id)}
-                                title="Eliminar"
                             />
                         </View>
                     </View>
@@ -194,7 +197,6 @@ const styles = StyleSheet.create({
         backgroundColor: "#fdffb6",
         marginTop: 20,
         marginHorizontal: 20,
-        paddingTop: 15,
         textAlign: "center",
         shadowColor: "#000",
         shadowOffset: {
@@ -206,19 +208,40 @@ const styles = StyleSheet.create({
 
         elevation: 8,
     },
+    subcita: {
+        padding: 5,
+        backgroundColor: "#5D534A",
+        color: "#FFFFFF",
+    },
     lista: {
         textAlign: "left",
-        margin: 5,
+        margin: 2,
         marginLeft: 25,
-        fontWeight: "600",
+        fontWeight: "300",
         color: "#5D534A",
     },
     listaTitulo: {
         textAlign: "left",
-        fontWeight: "700",
-        fontSize: 18,
+        fontWeight: '500',
+        fontSize: 15,
         color: "#5D534A",
-        marginTop: 5,
+        marginTop: 2,
+        marginLeft: 20,
+    },
+    listaTituloInicio: {
+        textAlign: "center",
+        fontWeight: "400",
+        fontSize: 15,
+        color: "#FFFFFF",
+        marginTop: 2,
+        marginLeft: 20,
+    },
+    listaTituloSubInicio: {
+        textAlign: "center",
+        fontWeight: "300",
+        fontSize: 15,
+        color: "#FFFFFF",
+        marginTop: 2,
         marginLeft: 20,
     },
     textoBtnEliminar: {
