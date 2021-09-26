@@ -32,6 +32,7 @@ useEffect(() => {
                 telefono,
                 manos,
                 pies,
+                fechaDb,
                 fecha,
                 hora,
                 comentarios,
@@ -44,6 +45,7 @@ useEffect(() => {
                 telefono,
                 manos,
                 pies,
+                fechaDb,
                 fecha,
                 hora,
                 comentarios,
@@ -89,11 +91,11 @@ useEffect(() => {
     var incremento = 0;
     useEffect(() => {
         citas.map((cita) => {
-            console.log("Fehca cita" + cita.fecha);
-            if (Date.parse(cita.fecha) === Date.parse(fechaNuevaDos)) {
+            //console.log("Fehca cita" + cita.fecha);
+            if (Date.parse(cita.fechaDb) === Date.parse(fechaNuevaDos)) {
                 incremento++;
             }
-            console.log('incemento' + incremento)
+            //console.log('incemento' + incremento)
             setContador(incremento);
             return incremento;
         });
@@ -106,6 +108,10 @@ useEffect(() => {
                     component={Principal}
                     options={{
                         tabBarBadge: contador,
+                        tabBarBadgeStyle: {
+                            backgroundColor: "#E55777",
+                            color:'white'
+                        },
                         headerRight: () => (
                             <View style={{ marginRight: 20 }}>
                                 <Text>{fechaNueva}</Text>
@@ -116,10 +122,11 @@ useEffect(() => {
                         tabBarIcon: ({ color, size }) => (
                             <MaterialCommunityIcons
                                 name="calendar"
-                                color={color}
+                                color="#5D544A"
                                 size={size}
                             />
                         ),
+                        tabBarActiveTintColor: "#5D544A",
                     }}
                 />
                 <Tab.Screen
@@ -132,10 +139,11 @@ useEffect(() => {
                         tabBarIcon: ({ color, size }) => (
                             <MaterialCommunityIcons
                                 name="note-plus"
-                                color={color}
+                                color="#5D544A"
                                 size={size}
                             />
                         ),
+                        tabBarActiveTintColor: "#5D544A",
                     }}
                 />
                 <Tab.Screen
@@ -147,10 +155,11 @@ useEffect(() => {
                         tabBarIcon: ({ color, size }) => (
                             <MaterialCommunityIcons
                                 name="account-plus-outline"
-                                color={color}
+                                color="#5D544A"
                                 size={size}
                             />
                         ),
+                        tabBarActiveTintColor: "#5D544A",
                     }}
                 />
             </Tab.Navigator>
@@ -178,7 +187,7 @@ function ClientesTabs() {
             <Stack.Screen
                 name="detallesCliente"
                 component={DetallesCliente}
-                options={{ title: "Informacion del cliente" }}
+                options={{ title: "Información del cliente" }}
             />
         </Stack.Navigator>
     );

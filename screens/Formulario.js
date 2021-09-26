@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { Card, ListItem, Button, Input } from "react-native-elements";
+import { Card, ListItem, Button, Input, } from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
 import shortid from "shortid";
 import firebase from "../database/Firebase";
@@ -23,7 +23,7 @@ export default function Formulario(
     const [clientes, setClientes] = useState([]);
 
     useEffect(() => {
-        firebase.db.collection("clientes").onSnapshot((querySnapshot) => {
+        firebase.db.collection("clientes").orderBy("nombre", "asc").onSnapshot((querySnapshot) => {
             const clientes = [];
 
             querySnapshot.docs.forEach((doc) => {
@@ -57,6 +57,7 @@ export default function Formulario(
         telefono: "",
         manos: "",
         pies: "",
+        fechaDb:'',
         fechaCita: "",
         hora: "",
         comentarios: "",
@@ -64,20 +65,14 @@ export default function Formulario(
 
     const [manos, guardarManos] = useState("");
     const [pies, guardarPies] = useState("");
+    const [fechaDb, guardarFechaDb] = useState("");
     const [fechaCita, guardarFecha] = useState("");
     const [hora, guardarHora] = useState("");
     const [comentarios, guardarComentarios] = useState("");
 
-    // const [fechaCita, setFechaCita] = useState({
-    //     fecha: "",
-    // });
-
     const actualizarUseState = (name, value) => {
         setCitas({ ...citas, [name]: value });
     };
-    // const actualizarUseStateFecha = (name, value) => {
-    //     setFechaCita({ ...fechaCita, [name]: value });
-    // };
 
     //Funcion setState para gaurdar objecto dentro de un objeto
     // const actualizarUseStateCliente = (name, value) => {
@@ -91,7 +86,7 @@ export default function Formulario(
     // };
 
     const guardarNombre = async (valueId) => {
-        console.log("funciona" + valueId);
+        //console.log("funciona" + valueId);
 
         const dbRef = firebase.db.collection("clientes").doc(valueId);
         await dbRef
@@ -104,16 +99,19 @@ export default function Formulario(
                     apellidos: apellidos,
                     telefono: telefono,
                 };
-
                 // console.log(nombre, apellidos, telefono);
                 // setCitas+
                 setCitas(clientes);
+                
             })
             .catch((error) => {
                 console.log("Error getting documents: ", error);
             });
-        console.log(citas);
+        //console.log(citas);
     };
+    const inputNombre = React.createRef();
+    const inputApellidos = React.createRef();
+    const inputComentarios = React.createRef();
 
     const guardarNuevaCita = async () => {
         // setLoading(true);
@@ -122,8 +120,7 @@ export default function Formulario(
             manos === "" ||
             pies === "" ||
             fechaCita === "" ||
-            hora === "" ||
-            comentarios === ""
+            hora === "" 
         ) {
             mostrarAlerta();
         } else {
@@ -134,49 +131,28 @@ export default function Formulario(
                     telefono: citas.telefono,
                     manos: manos,
                     pies: pies,
+                    fechaDb:fechaDb,
                     fecha: fechaCita,
                     hora: hora,
                     comentarios: comentarios
                 });
+                inputNombre.current.clear();
+                inputApellidos.current.clear();
+                inputComentarios.current.clear();
                 Alert.alert("Nueva cita", "Cita creada con exito");
                 props.navigation.navigate("citas");
+                guardarManos('');
+                guardarPies('');
+                guardarFechaDb('');
+                guardarFecha('');
+                guardarHora('')
+                guardarComentarios('');
             } catch (error) {
                 console.log(error);
                 alert("Ocurrio un error al guardar los datos");
             }
         }
     };
-
-    // const guardarCita = () => {
-    //     if (
-    //         (cliente.trim() === "") |
-    //         (manos.trim() === "") |
-    //         (pies.trim() === "") |
-    //         (fechaCita.trim() === "") |
-    //         (hora.trim() === "")
-    //     ) {
-    //         mostrarAlerta();
-    //         return;
-    //     }
-    //     //Crear nueva citas
-    //     const cita = {
-    //         id,
-    //         cliente,
-    //         manos,
-    //         pies,
-    //         fechaCita,
-    //         hora,
-    //         comentarios,
-    //     };
-
-    //     cita.id = shortid.generate();
-    //     //Agregar al state citas
-    //     const citasNuevo = [...citas, cita];
-    //     setCitas(citasNuevo);
-    //     //Ocultar formulario
-    //     guardarMostrarForm(false);
-    //     //Resetear formularionpm
-    // };
 
     //Mostrar alerta
     const mostrarAlerta = () => {
@@ -225,11 +201,19 @@ export default function Formulario(
         ];
 
         guardarFecha(
-            // dias[hoy.getDay()] +
-            //     " " +
-                hoy.getMonth() + 1 + '/'+ hoy.getDate() + "/" + hoy.getFullYear()
+            dias[hoy.getDay()] +
+                " " +
+                hoy.getDate() +
+                "/" +
+                (hoy.getMonth() +
+                1) +
+                "/" +
+                hoy.getFullYear()
         );
-        console.log("Hola me estoy ejecutando" + fechaCita);
+        guardarFechaDb(
+            hoy.getMonth() + 1 + "/" + hoy.getDate() + "/" + hoy.getFullYear()
+        );
+        //console.log("Hola me estoy ejecutando" + fechaCita);
     };
 
     const fechaNormalCita = new Date(date);
@@ -276,6 +260,7 @@ export default function Formulario(
                             <Picker.Item
                                 label={cliente.nombre + " " + cliente.apellidos}
                                 value={cliente.id}
+                                key={cliente.id}
                             />
                         ))}
                     </Picker>
@@ -283,24 +268,28 @@ export default function Formulario(
 
                 <View>
                     <Text style={styles.label}>Manos</Text>
-                    <TextInput
-                        style={styles.input}
-                        onChangeText={(value) =>
-                            guardarManos(value)
-                        }
-                        placeholder="Ejemplo: gel, acrilicos o nada"
-                        color="black"
+                    <Input
+                        placeholder="Ej: gel, acrilicos o nada"
+                        ref={inputNombre}
+                        leftIcon={{
+                            type: "entypo",
+                            name: "hand",
+                            color: "#5D534A",
+                        }}
+                        onChangeText={(value) => guardarManos(value)}
                     />
                 </View>
                 <View>
                     <Text style={styles.label}>Pies</Text>
-                    <TextInput
-                        style={styles.input}
-                        onChangeText={(value) =>
-                            guardarPies(value)
-                        }
-                        placeholder=" Ejemplo: semipermanentes, acrilicos o nada"
-                        color="black"
+                    <Input
+                        placeholder="Ej: gel, acrilicos o nada"
+                        ref={inputApellidos}
+                        leftIcon={{
+                            type: "foundation",
+                            name: "foot",
+                            color: "#5D534A",
+                        }}
+                        onChangeText={(value) => guardarPies(value)}
                     />
                 </View>
                 <View>
@@ -316,7 +305,15 @@ export default function Formulario(
                     <Button
                         onPress={() => showMode("date")}
                         title="Seleccionar fecha"
-                        buttonStyle={{ backgroundColor: "#D6D2C4", margin: 10 }}
+                        leftIcon={{
+                            type: "foundation",
+                            name: "foot",
+                            color: "#5D534A",
+                        }}
+                        buttonStyle={{
+                            backgroundColor: "#7d756e",
+                            marginHorizontal: 30,
+                        }}
                     />
                 </View>
 
@@ -326,7 +323,15 @@ export default function Formulario(
                     <Button
                         onPress={() => showMode("time")}
                         title="Seleccionar hora"
-                        buttonStyle={{ backgroundColor: "#D6D2C4", margin: 10 }}
+                        leftIcon={{
+                            type: "foundation",
+                            name: "foot",
+                            color: "#5D534A",
+                        }}
+                        buttonStyle={{
+                            backgroundColor: "#7d756e",
+                            marginHorizontal: 30,
+                        }}
                     />
                 </View>
                 {show && (
@@ -343,36 +348,34 @@ export default function Formulario(
 
                 <View>
                     <Text style={styles.label}>Comentarios</Text>
-                    <TextInput
-                        multiline
-                        style={styles.input}
-                        onChangeText={(value) =>
-                            guardarComentarios(value)
-                        }
-                        keyboardType={"default"}
-                        placeholder="Escribe aqui algo adicional que quieres recordar"
-                        color="black"
+                    <Input
+                        placeholder="Escribe algo que quieras recordar, o no"
+                        ref={inputComentarios}
+                        leftIcon={{
+                            type: "font-awesome",
+                            name: "comment",
+                            color: "#5D534A",
+                        }}
+                        onChangeText={(value) => guardarComentarios(value)}
                     />
-                    {/* <Input
-                        placeholder="Comment"
-                        leftIcon={{ type: "font-awesome", name: "comment" }}
-                    /> */}
                 </View>
-                <Button
-                    style={{ margin: 10 }}
-                    icon={{
-                        name: "edit",
-                        size: 30,
-                        color: "white",
-                    }}
-                    title="Añadir cita"
-                    onPress={() => guardarNuevaCita()}
-                    buttonStyle={{
-                        backgroundColor: "#5D534A",
-                        marginBottom: 20,
-                        margin: 10,
-                    }}
-                />
+                <View>
+                    <Button
+                        style={{ margin: 0 }}
+                        icon={{
+                            type: "font-awesome",
+                            name: "calendar-plus-o",
+                            color: "white",
+                        }}
+                        title="Añadir cita"
+                        onPress={() => guardarNuevaCita()}
+                        buttonStyle={{
+                            backgroundColor: "#5D534A",
+                            marginBottom: 20,
+                            margin: 10,
+                        }}
+                    />
+                </View>
             </ScrollView>
         </>
     );
@@ -404,11 +407,11 @@ const styles = StyleSheet.create({
         borderWidth: 1,
     },
     formulario: {
-        zIndex: -1,
         flex: 1,
-        backgroundColor: "#FFF5DA",
+        backgroundColor: "#fdffb6",
+        paddingTop: 10,
         margin: 10,
-        paddingVertical: 10,
+        paddingVertical: 20,
         shadowColor: "#000",
         shadowOffset: {
             width: 0,

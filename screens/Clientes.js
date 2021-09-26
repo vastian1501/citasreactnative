@@ -1,15 +1,15 @@
-import React, { useState } from 'react'
-import { Text, ScrollView, StyleSheet, TextInput, View } from 'react-native';
-import { Button } from "react-native-elements";
+import React, { useState } from "react";
+import { Text, ScrollView, StyleSheet, TextInput, View } from "react-native";
+import { Button, Input } from "react-native-elements";
 
-import firebase from '../database/Firebase'
+import firebase from "../database/Firebase";
 
 export const Clientes = (props) => {
     const [cliente, setCliente] = useState({
-        nombre:'',
-        apellidos:'',
-        telefono:''
-    })
+        nombre: "",
+        apellidos: "",
+        telefono: "",
+    });
 
     const actualizarUseState = (name, value) => {
         setCliente({ ...cliente, [name]: value });
@@ -42,34 +42,38 @@ export const Clientes = (props) => {
             <ScrollView style={styles.formulario}>
                 <View>
                     <Text style={styles.label}>Nombre</Text>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Nombre del cliente"
-                        color="black"
+                    <Input
+                        placeholder="Ej: Sara"
+                        leftIcon={{
+                            type: "font-awesome",
+                            name: "user",
+                            color: "#5D534A",
+                        }}
                         onChangeText={(value) =>
                             actualizarUseState("nombre", value)
                         }
                     />
-                </View>
-
-                <View>
                     <Text style={styles.label}>Apellidos</Text>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Apellidos"
-                        color="black"
+                    <Input
+                        placeholder="Ej: Tancredi Burrows"
+                        leftIcon={{
+                            type: "font-awesome",
+                            name: "user",
+                            color: "#5D534A",
+                        }}
                         onChangeText={(value) =>
                             actualizarUseState("apellidos", value)
                         }
                     />
-                </View>
-                <View>
-                    <Text style={styles.label}>Telefono</Text>
-                    <TextInput
-                        style={styles.input}
-                        placeholder=" Introduce su telefono"
+                    <Text style={styles.label}>Número</Text>
+                    <Input
+                        placeholder="Ej: 655655655"
                         keyboardType="numeric"
-                        color="black"
+                        leftIcon={{
+                            type: "font-awesome",
+                            name: "mobile",
+                            color: "#5D534A",
+                        }}
                         onChangeText={(value) =>
                             actualizarUseState("telefono", value)
                         }
@@ -79,11 +83,12 @@ export const Clientes = (props) => {
                 <Button
                     style={{ margin: 10 }}
                     icon={{
-                        name: "edit",
-                        size: 30,
+                        type: "font-awesome",
+                        name: "user-plus",
+                        //size: 30,
                         color: "white",
                     }}
-                    title="Guardar cliente"
+                    title="Guardar clienta"
                     onPress={() => guardarNuevoCliente()}
                     buttonStyle={{
                         backgroundColor: "#5D534A",
@@ -122,9 +127,8 @@ const styles = StyleSheet.create({
         borderWidth: 1,
     },
     formulario: {
-        zIndex: -1,
-        flex: 1,
-        backgroundColor: "#FFF5DA",
+        backgroundColor: "#fdffb6",
+        paddingTop: 30,
         margin: 10,
         paddingVertical: 10,
         shadowColor: "#000",

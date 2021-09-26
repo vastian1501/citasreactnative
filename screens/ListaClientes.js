@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react'
-import {ScrollView, Text} from 'react-native'
+import React, { useEffect, useState } from "react";
+import { ScrollView, Text, StyleSheet } from "react-native";
 
 import { ListItem, Avatar, Icon, Button } from "react-native-elements";
-import firebase from '../database/Firebase';
+import firebase from "../database/Firebase";
 
 export const ListaClientes = (props) => {
-    const [clientes, setClientes] = useState([])
+    const [clientes, setClientes] = useState([]);
 
     useEffect(() => {
         firebase.db.collection("clientes").onSnapshot((querySnapshot) => {
@@ -41,10 +41,18 @@ export const ListaClientes = (props) => {
     return (
         <ScrollView>
             <Button
-                title="Añadir nuevo cliente"
-                color="red"
+                title="Crear nueva clienta"
+                icon={<Icon name="person" color="white" />}
+                buttonStyle={{
+                    backgroundColor: "#E55777",
+                }}
                 onPress={() => props.navigation.navigate("nuevoCliente")}
             />
+            <Text style={styles.subtituloCP}>
+                {clientes.length > 0
+                    ? "Todas las clientas"
+                    : "Todavia no tienes clientas, pulsa en crear para añadir una nueva"}
+            </Text>
             {clientes.map((cliente) => {
                 return (
                     <ListItem
@@ -76,4 +84,31 @@ export const ListaClientes = (props) => {
             })}
         </ScrollView>
     );
-}
+};
+
+const styles = StyleSheet.create({
+    titulo: {
+        textAlign: "center",
+        marginTop: 40,
+        fontSize: 40,
+        fontWeight: "bold",
+        color: "#5D534A",
+    },
+    subtitulo: {
+        textAlign: "center",
+        marginTop: 15,
+        margin: 10,
+        fontSize: 15,
+        fontWeight: "bold",
+        color: "#5D534A",
+    },
+    subtituloCP: {
+        textAlign: "center",
+        fontSize: 20,
+        padding: 10,
+        fontWeight: "300",
+        color: "#5D534A",
+        backgroundColor: "#FFFFFF",
+    },
+});
+

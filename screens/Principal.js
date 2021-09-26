@@ -24,6 +24,7 @@ export default function Principal(props) {
                     telefono,
                     manos,
                     pies,
+                    fechaDb,
                     fecha,
                     hora,
                     comentarios,
@@ -36,6 +37,7 @@ export default function Principal(props) {
                     telefono,
                     manos,
                     pies,
+                    fechaDb,
                     fecha,
                     hora,
                     comentarios,
@@ -48,7 +50,7 @@ export default function Principal(props) {
 
     //Contador de citas para hoy 
     const [contador, setContador] = useState(0);
-    console.log('contador1 = ' +contador)
+    //console.log('contador1 = ' +contador)
     
     //Eliminar states de Citas
     const eliminarCitas = (id) => {
@@ -75,40 +77,23 @@ export default function Principal(props) {
     ];
     const fechaNueva =
         hoy.getMonth() + 1 + '/'+ hoy.getDate() + "/" + hoy.getFullYear();
-        
-    console.log(fechaNueva);
-
-
-    
-    
-    
-    // var incremento = 0;
-    // citas.map((cita) => {
-    //     Date.parse(cita.fechaCita);
-    //     if (Date.parse(cita.fechaCita) === Date.parse(fechaNueva)) {
-    //         incremento++;
-    //     }
-    //     console.log("Fecha cita " + cita.fechaCita);
-    //     console.log("Esto incrementa" + incremento);
-    //     return incremento;
-    // });
     
     var incremento = 0;
     useEffect(() => {
             citas.map((cita) => {
-                console.log('Fehca cita' + cita.fecha)
-                if (Date.parse(cita.fecha) === Date.parse(fechaNueva)) {
+                //console.log('Fehca cita' + cita.fecha)
+                if (Date.parse(cita.fechaDb) === Date.parse(fechaNueva)) {
                     incremento++;
                 }
-                console.log("Fecha cita parse " + new Date(cita.fecha));
-                console.log("Esto incrementa" + incremento);
+                //console.log("Fecha cita parse " + new Date(cita.fecha));
+                //console.log("Esto incrementa" + incremento);
                 setContador(incremento);
                 return incremento;
             });
         })
 
 
-    console.log('Cuenta' + contador)
+    //console.log('Cuenta' + contador)
 
     //Mostrar ocultar Formulario
     const [mostrarForm, guardarMostrarForm] = useState(false);
@@ -123,18 +108,13 @@ export default function Principal(props) {
                     <Text style={styles.subtituloCP}>
                         {citas.length > 0
                             ? [
-                                  "Citas pendientes: ",
+                                  "Total de citas: ",
                                   citas.length,
-                                  " Citas para hoy: ",
+                                  " || Citas para hoy: ",
                                   contador,
                               ]
                             : "No hay citas, añade una nueva"}
                     </Text>
-                    {/* {citas.map((cita) => {
-                        return(
-                            <Cita citas={cita} />
-                        )
-                    })} */}
                     
                     <Citas citas={citas} />
                 </>
@@ -145,7 +125,7 @@ export default function Principal(props) {
 const styles = StyleSheet.create({
     fondo: {
         zIndex: -1,
-        backgroundColor: "#F7DAD9",
+        //backgroundColor: "#F7DAD9",
         flex: 1,
     },
     titulo: {
@@ -168,9 +148,9 @@ const styles = StyleSheet.create({
         marginTop: 10,
         fontSize: 20,
         padding: 10,
-        fontWeight: "bold",
+        fontWeight: "300",
         color: "#FFFF",
-        backgroundColor: "#5D534A",
+        backgroundColor: "#E55777",
     },
     flatList: {
         flex: 1,

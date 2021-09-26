@@ -17,7 +17,7 @@ export default function Citas(props) {
     const [citas, setCitas] = useState([]);
 
     useEffect(() => {
-        firebase.db.collection("citas").onSnapshot((querySnapshot) => {
+        firebase.db.collection("citas").orderBy("hora","asc").onSnapshot((querySnapshot) => {
             const citas = [];
 
             querySnapshot.docs.forEach((doc) => {
@@ -27,6 +27,7 @@ export default function Citas(props) {
                     telefono,
                     manos,
                     pies,
+                    fechaDb,
                     fecha,
                     hora,
                     comentarios,
@@ -39,6 +40,7 @@ export default function Citas(props) {
                     telefono,
                     manos,
                     pies,
+                    fechaDb,
                     fecha,
                     hora,
                     comentarios,
@@ -46,15 +48,20 @@ export default function Citas(props) {
             });
 
             setCitas(citas);
+
+            //Ordenar citas por fecha
+
+            const sortByDate = () => {
+                const sortFechas = [...citas].sort((a, b) => {
+                    a = new Date(a.fechaDb);
+                    b = new Date(b.fechaDb);
+                    return b > a ? -1 : b < a ? 1 : 0;
+                });
+                setCitas(sortFechas);
+            };
+            sortByDate();
         });
     }, []);
-
-    //Eliminar Citas
-
-    // const dialogoEliminar = (id) => {
-    //     console.log("Eliminando...", id);
-    //     eliminarCitas(id);
-    // };
 
     const eliminarCitas = async (id) => {
         //setLoading(true);
@@ -66,7 +73,6 @@ export default function Citas(props) {
     };
 
     const confirnmDelete = (id) => {
-        console.log('Id: ' + id)
         Alert.alert(
             "Eliminar cita",
             "¿Desea eliminar la cita ?",
@@ -76,8 +82,6 @@ export default function Citas(props) {
             ]
         );
     };
-
-
 
     //Funcion para mandar Whatsapp
     const sendWhatsApp = (numero) => {
@@ -187,7 +191,7 @@ export default function Citas(props) {
 
 const styles = StyleSheet.create({
     cita: {
-        backgroundColor: "#FFF5DA",
+        backgroundColor: "#fdffb6",
         marginTop: 20,
         marginHorizontal: 20,
         paddingTop: 15,
@@ -206,11 +210,12 @@ const styles = StyleSheet.create({
         textAlign: "left",
         margin: 5,
         marginLeft: 25,
+        fontWeight: "600",
         color: "#5D534A",
     },
     listaTitulo: {
         textAlign: "left",
-        fontWeight: "bold",
+        fontWeight: "700",
         fontSize: 18,
         color: "#5D534A",
         marginTop: 5,

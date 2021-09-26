@@ -108,14 +108,15 @@ export const DetallesCliente = (props) => {
             </View>
             <View style={styles.button}>
                 <Button
-                    title="Eliminar usuario"
-                    color="red"
+                    title="Eliminar"
+                    color="#FF6961"
                     onPress={() => confirnmDelete()}
                 />
             </View>
             <View style={styles.button}>
                 <Button
                     title="Guardar cambios"
+                    color="#5D534A"
                     onPress={() => actualizarUser()}
                 />
             </View>
