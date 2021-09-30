@@ -104,7 +104,7 @@ export default function Citas(props) {
     };
 
     return (
-        <ScrollView>
+        <ScrollView style={styles.scroll}>
             {citas.map((cita) => {
                 return (
                     <View style={styles.cita} key={cita.id}>
@@ -205,7 +205,6 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.3,
         shadowRadius: 4.65,
-
         elevation: 8,
     },
     subcita: {
@@ -222,7 +221,7 @@ const styles = StyleSheet.create({
     },
     listaTitulo: {
         textAlign: "left",
-        fontWeight: '500',
+        fontWeight: "700",
         fontSize: 15,
         color: "#5D534A",
         marginTop: 2,
@@ -234,15 +233,15 @@ const styles = StyleSheet.create({
         fontSize: 15,
         color: "#FFFFFF",
         marginTop: 2,
-        marginLeft: 20,
     },
     listaTituloSubInicio: {
+        borderTopColor: "#FFF",
+        borderTopWidth: 1,
         textAlign: "center",
         fontWeight: "300",
         fontSize: 15,
         color: "#FFFFFF",
         marginTop: 2,
-        marginLeft: 20,
     },
     textoBtnEliminar: {
         color: "#EDF6E5",

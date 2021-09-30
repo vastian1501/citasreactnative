@@ -1,43 +1,39 @@
 import React, { useEffect, useState } from "react";
 import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { Card, ListItem, Button, Input, } from "react-native-elements";
+import { Card, ListItem, Button, Input } from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
 import shortid from "shortid";
 import firebase from "../database/Firebase";
 
-import {
-    Image,
-    StyleSheet,
-    Text,
-    View,
-    FlatList,
-    TextInput,
-    ScrollView,
-    Alert,
-} from "react-native";
+import { StyleSheet, Text, View, ScrollView, Alert } from "react-native";
 
-export default function Formulario(
-    props
-) {
+export default function Formulario(props) {
     const [clientes, setClientes] = useState([]);
+    const inputNombre = React.createRef();
+    const inputApellidos = React.createRef();
+    const inputComentarios = React.createRef();
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        firebase.db.collection("clientes").orderBy("nombre", "asc").onSnapshot((querySnapshot) => {
-            const clientes = [];
+        firebase.db
+            .collection("clientes")
+            .orderBy("nombre", "asc")
+            .onSnapshot((querySnapshot) => {
+                const clientes = [];
 
-            querySnapshot.docs.forEach((doc) => {
-                const { nombre, apellidos, telefono } = doc.data();
-                clientes.push({
-                    id: doc.id,
-                    nombre,
-                    apellidos,
-                    telefono,
+                querySnapshot.docs.forEach((doc) => {
+                    const { nombre, apellidos, telefono } = doc.data();
+                    clientes.push({
+                        id: doc.id,
+                        nombre,
+                        apellidos,
+                        telefono,
+                    });
                 });
-            });
 
-            setClientes(clientes);
-        });
+                setClientes(clientes);
+            });
     }, []);
 
     const [isSelected, setSelection] = useState(false);
@@ -57,7 +53,7 @@ export default function Formulario(
         telefono: "",
         manos: "",
         pies: "",
-        fechaDb:'',
+        fechaDb: "",
         fechaCita: "",
         hora: "",
         comentarios: "",
@@ -102,28 +98,34 @@ export default function Formulario(
                 // console.log(nombre, apellidos, telefono);
                 // setCitas+
                 setCitas(clientes);
-                
             })
             .catch((error) => {
                 console.log("Error getting documents: ", error);
             });
         //console.log(citas);
     };
-    const inputNombre = React.createRef();
-    const inputApellidos = React.createRef();
-    const inputComentarios = React.createRef();
+
+    const limpiarInput = () => {
+        inputNombre.current.clear();
+        inputApellidos.current.clear();
+        inputComentarios.current.clear();
+    };
 
     const guardarNuevaCita = async () => {
-        // setLoading(true);
+        //setLoading(false);
         if (
             citas.nombre === "" ||
             manos === "" ||
             pies === "" ||
             fechaCita === "" ||
-            hora === "" 
+            hora === ""
         ) {
+            setLoading(false);
             mostrarAlerta();
+            setLoading(true);
         } else {
+            limpiarInput()
+            setLoading(false);
             try {
                 await firebase.db.collection("citas").add({
                     nombre: citas.nombre,
@@ -131,22 +133,20 @@ export default function Formulario(
                     telefono: citas.telefono,
                     manos: manos,
                     pies: pies,
-                    fechaDb:fechaDb,
+                    fechaDb: fechaDb,
                     fecha: fechaCita,
                     hora: hora,
-                    comentarios: comentarios
+                    comentarios: comentarios,
                 });
-                inputNombre.current.clear();
-                inputApellidos.current.clear();
-                inputComentarios.current.clear();
                 Alert.alert("Nueva cita", "Cita creada con exito");
                 props.navigation.navigate("citas");
-                guardarManos('');
-                guardarPies('');
-                guardarFechaDb('');
-                guardarFecha('');
-                guardarHora('')
-                guardarComentarios('');
+                guardarManos("");
+                guardarPies("");
+                guardarFechaDb("");
+                guardarFecha("");
+                guardarHora("");
+                guardarComentarios("");
+                setLoading(true);
             } catch (error) {
                 console.log(error);
                 alert("Ocurrio un error al guardar los datos");
@@ -205,8 +205,7 @@ export default function Formulario(
                 " " +
                 hoy.getDate() +
                 "/" +
-                (hoy.getMonth() +
-                1) +
+                (hoy.getMonth() + 1) +
                 "/" +
                 hoy.getFullYear()
         );
@@ -360,21 +359,38 @@ export default function Formulario(
                     />
                 </View>
                 <View>
-                    <Button
-                        style={{ margin: 0 }}
-                        icon={{
-                            type: "font-awesome",
-                            name: "calendar-plus-o",
-                            color: "white",
-                        }}
-                        title="Añadir cita"
-                        onPress={() => guardarNuevaCita()}
-                        buttonStyle={{
-                            backgroundColor: "#5D534A",
-                            marginBottom: 20,
-                            margin: 10,
-                        }}
-                    />
+                    {loading ? (
+                        <>
+                            <Button
+                                style={{ margin: 0 }}
+                                icon={{
+                                    type: "font-awesome",
+                                    name: "calendar-plus-o",
+                                    color: "white",
+                                }}
+                                title="Guardar cita"
+                                onPress={() => guardarNuevaCita()}
+                                buttonStyle={{
+                                    backgroundColor: "#5D534A",
+                                    marginBottom: 20,
+                                    margin: 10,
+                                }}
+                            />
+                        </>
+                    ) : (
+                        <>
+                            <Button
+                                style={{ margin: 0 }}
+                                loading
+                                title="Guardar cita"
+                                buttonStyle={{
+                                    backgroundColor: "#5D534A",
+                                    marginBottom: 20,
+                                    margin: 10,
+                                }}
+                            />
+                        </>
+                    )}
                 </View>
             </ScrollView>
         </>

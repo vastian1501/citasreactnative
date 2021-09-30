@@ -39,15 +39,9 @@ export const ListaClientes = (props) => {
         });
     }, []);
     return (
+        <>
         <ScrollView>
-            <Button
-                title="Crear nueva clienta"
-                icon={<Icon name="person" color="white" />}
-                buttonStyle={{
-                    backgroundColor: "#E55777",
-                }}
-                onPress={() => props.navigation.navigate("nuevoCliente")}
-            />
+            
             <Text style={styles.subtituloCP}>
                 {clientes.length > 0
                     ? "Todas las clientas"
@@ -83,6 +77,16 @@ export const ListaClientes = (props) => {
                 );
             })}
         </ScrollView>
+        <Button
+                title="Crear nueva clienta"
+                icon={<Icon name="person" color="white" />}
+                buttonStyle={{
+                    backgroundColor: "#E55777",
+                    margin: 5,
+                }}
+                onPress={() => props.navigation.navigate("nuevoCliente")}
+            />
+        </>
     );
 };
 

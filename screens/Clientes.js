@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Text, ScrollView, StyleSheet, TextInput, View } from "react-native";
+import { Text, ScrollView, StyleSheet, TextInput, View, ActivityIndicator } from "react-native";
 import { Button, Input } from "react-native-elements";
 
 import firebase from "../database/Firebase";
@@ -11,6 +11,8 @@ export const Clientes = (props) => {
         telefono: "",
     });
 
+    const [loading, setLoading] = useState(true);
+
     const actualizarUseState = (name, value) => {
         setCliente({ ...cliente, [name]: value });
     };
@@ -21,8 +23,11 @@ export const Clientes = (props) => {
             cliente.apellidos === "" ||
             cliente.telefono === ""
         ) {
+            setLoading(false);
             alert("Rellene todos los campos");
+            setLoading(true);
         } else {
+            setLoading(false);
             try {
                 await firebase.db.collection("clientes").add({
                     nombre: cliente.nombre,
@@ -37,6 +42,15 @@ export const Clientes = (props) => {
             }
         }
     };
+
+    // if (loading) {
+    //     return (
+    //         <View>
+    //             <ActivityIndicator size="large" color="red" />
+    //         </View>
+    //     );
+    // }
+    
     return (
         <>
             <ScrollView style={styles.formulario}>
@@ -80,22 +94,39 @@ export const Clientes = (props) => {
                     />
                 </View>
 
-                <Button
-                    style={{ margin: 10 }}
-                    icon={{
-                        type: "font-awesome",
-                        name: "user-plus",
-                        //size: 30,
-                        color: "white",
-                    }}
-                    title="Guardar clienta"
-                    onPress={() => guardarNuevoCliente()}
-                    buttonStyle={{
-                        backgroundColor: "#5D534A",
-                        marginBottom: 20,
-                        margin: 10,
-                    }}
-                />
+                {loading ? (
+                    <>
+                        <Button
+                            style={{ margin: 10 }}
+                            icon={{
+                                type: "font-awesome",
+                                name: "user-plus",
+                                //size: 30,
+                                color: "white",
+                            }}
+                            title="Guardar clienta"
+                            onPress={() => guardarNuevoCliente()}
+                            buttonStyle={{
+                                backgroundColor: "#5D534A",
+                                marginBottom: 20,
+                                margin: 10,
+                            }}
+                        />
+                    </>
+                ) : (
+                    <>
+                        <Button
+                            style={{ margin: 10 }}
+                            loading
+                            title="Guardar clienta"
+                            buttonStyle={{
+                                backgroundColor: "#5D534A",
+                                marginBottom: 20,
+                                margin: 10,
+                            }}
+                        />
+                    </>
+                )}
             </ScrollView>
         </>
     );
